@@ -3,20 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <title>Mini App</title>
+
+  <!-- Telegram SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+      background: var(--tg-theme-bg-color);
+      color: var(--tg-theme-text-color);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: var(--tg-theme-button-color);
+      color: var(--tg-theme-button-text-color);
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Моё первое Mini App</h2>
 
-  <button id="btn">Нажми меня</button>
+<h2>Данные пользователя</h2>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // раскрыть на весь экран
+<p><b>User ID:</b> <span id="uid">—</span></p>
+<p><b>Username:</b> <span id="uname">—</span></p>
 
-    document.getElementById("btn").onclick = () => {
-      tg.showAlert("Работает!");
-    };
-  </script>
+<button id="send">Отправить боту</button>
+
+<script>
+  // 1. Подключаем Telegram API
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+
+  // 2. Получаем данные пользователя
+  const user = tg.initDataUnsafe.user;
+
+  // 3. Проверяем, что данные есть
+  if (!user) {
+    alert("Открой Mini App через Telegram!");
+  } else {
+    // 4. Показываем данные на экране
+    document.getElementById("uid").textContent = user.id;
+    document.getElementById("uname").textContent = user.username || "нет";
+  }
+
+  // 5. Отправка данных боту
+  document.getElementById("send").onclick = () => {
+    tg.sendData(JSON.stringify({
+      action: "user_info",
+      user_id: user.id,
+      username: user.username
+    }));
+  };
+</script>
+
 </body>
 </html>
